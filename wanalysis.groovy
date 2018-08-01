@@ -9,30 +9,33 @@ import org.jlab.io.hipo.HipoDataSource;
 
 
 double en = Double.parseDouble(args[1]);
+double enmax = en+0.1;
+double thetamax = 0.75;
+double phimax = 3.2;
 HipoDataSource reader = new HipoDataSource();
 
 H1F momentum = new H1F("momentum", "momentum", 500, 0, 10);
 momentum.setTitleX("momentum");
 
-H1F W_hist = new H1F("W", "W", 500, 0, en);
+H1F W_hist = new H1F("W", "W", 500, 0, enmax);
 W_hist.setTitleX("W");
 
-H1F Q2_hist = new H1F("Q2", "Q2", 500, 0, 10);
+H1F Q2_hist = new H1F("Q2", "Q2", 500, 0, enmax);
 Q2_hist.setTitleX("Q2");
 
-H2F W_vs_Q2 = new H2F("W_vs_Q2", "W_vs_Q2", 500, 0.0, 2.5, 500, 0.0, en);
+H2F W_vs_Q2 = new H2F("W_vs_Q2", "W_vs_Q2", 500, 0.0, enmax, 500, 0.0, enmax);
 W_vs_Q2.setTitleX("Q2");
 W_vs_Q2.setTitleY("W");
 
-H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 0, 1, 500, 0, en);
+H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 0, thetamax, 500, 0, enmax);
 E_vs_Theta.setTitleX("Theta");
 E_vs_Theta.setTitleY("E'");
 
-H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.1 , 1, 500, -200, 200);
+H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.1 , thetamax, 500, -200, 200);
 z_vs_Theta.setTitleX("Theta");
 z_vs_Theta.setTitleY("z vertex");
 
-H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 0, 1, 500, -3.5, 3.5);
+H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 0, thetamax, 500, -phimax, phimax);
 Phi_vs_Theta.setTitleX("Theta");
 Phi_vs_Theta.setTitleY("Phi");
 	
@@ -45,8 +48,8 @@ LorentzVector e_vec = new LorentzVector(0.0, 0.0, en, en);
 reader.open(args[0]);
 
 double emax = 0;
-double phimax = 0;
-double thetamax = 0;
+phimax = 0;
+thetamax = 0;
 double vzmax = 0;
 int counter = 0;
 
