@@ -14,25 +14,25 @@ HipoDataSource reader = new HipoDataSource();
 H1F momentum = new H1F("momentum", "momentum", 500, 0, 10);
 momentum.setTitleX("momentum");
 
-H1F W_hist = new H1F("W", "W", 500, 0, 2.5);
+H1F W_hist = new H1F("W", "W", 500, 0, en);
 W_hist.setTitleX("W");
 
 H1F Q2_hist = new H1F("Q2", "Q2", 500, 0, 10);
 Q2_hist.setTitleX("Q2");
 
-H2F W_vs_Q2 = new H2F("W_vs_Q2", "W_vs_Q2", 500, 0.0, 2.5, 500, 0.0, 1.5);
+H2F W_vs_Q2 = new H2F("W_vs_Q2", "W_vs_Q2", 500, 0.0, 2.5, 500, 0.0, en);
 W_vs_Q2.setTitleX("Q2");
 W_vs_Q2.setTitleY("W");
 
-H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 0,3.5, 500, 0, en);
+H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 0, 1, 500, 0, en);
 E_vs_Theta.setTitleX("Theta");
 E_vs_Theta.setTitleY("E'");
 
-H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.9,3.5, 500, -20, 20);
+H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.1 , 1, 500, -200, 200);
 z_vs_Theta.setTitleX("Theta");
 z_vs_Theta.setTitleY("z vertex");
 
-H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 0 , 3.5, 500, -3.5, 3.5);
+H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 0, 1, 500, -3.5, 3.5);
 Phi_vs_Theta.setTitleX("Theta");
 Phi_vs_Theta.setTitleY("Phi");
 	
