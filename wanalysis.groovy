@@ -9,9 +9,10 @@ import org.jlab.io.hipo.HipoDataSource;
 
 
 double en = Double.parseDouble(args[1]);
-double enmax = en+0.1;
-double thetamax = 0.75;
-double phimax = 3.2;
+double enmax = en+0.1; //GeV
+double thetamax = 40;  //degrees
+double phimax = 3.2;   //radians
+double vzmax = 50;
 HipoDataSource reader = new HipoDataSource();
 
 H1F momentum = new H1F("momentum", "momentum", 500, 0, 10);
@@ -31,13 +32,17 @@ H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 0, thetamax, 500, 0, e
 E_vs_Theta.setTitleX("Theta");
 E_vs_Theta.setTitleY("E'");
 
-H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.1 , thetamax, 500, -200, 200);
+H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.1 , thetamax, 500, -vzmax, vzmax);
 z_vs_Theta.setTitleX("Theta");
 z_vs_Theta.setTitleY("z vertex");
 
 H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 0, thetamax, 500, -phimax, phimax);
 Phi_vs_Theta.setTitleX("Theta");
 Phi_vs_Theta.setTitleY("Phi");
+
+H2F Phi_vs_W = new H2F("Phi_vs_W", "Phi_vs_W", 500, 0, enmax, 500, -phimax, phimax);
+Phi_vs_W.setTitleX("W");
+Phi_vs_W.setTitleY("Phi");
 	
 double e_mass = 0.000511;
 double p_mass = 0.93827203;
@@ -50,7 +55,7 @@ reader.open(args[0]);
 double emax = 0;
 phimax = 0;
 thetamax = 0;
-double vzmax = 0;
+vzmax = 0;
 int counter = 0;
 
 while (reader.hasEvent()) {
@@ -68,8 +73,9 @@ while (reader.hasEvent()) {
 			float mom = (float) Math.sqrt(px * px + py * py + pz * pz);
 			double phi = Math.atan2((double) py,(double) px);
 			double theta = Math.acos((double) pz/(double) mom);
+			theta *= 180/Math.PI;
 			float vz = bank_rec.getFloat("vz", k);	     
-
+			
 			if (pid != 11) continue;
 			
 			momentum.fill(mom);
@@ -78,6 +84,8 @@ while (reader.hasEvent()) {
 			LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
 			e_vec_prime.setVectM(e_vec_3, e_mass);
 			
+			if(e_vec_prime.e() < 0.1 * en){continue;}
+		
 			LorentzVector q_vec = new LorentzVector(); //4 vector q
 			q_vec.copy(e_vec); //e - e'
 			q_vec.sub(e_vec_prime);
@@ -90,15 +98,18 @@ while (reader.hasEvent()) {
 			double W = w_vec.mass(); 
 			W_hist.fill(W);
 			W_vs_Q2.fill(Q2,W);
+			Phi_vs_W.fill(W,phi);
 			
 			if(e_vec_prime.e()>emax){emax = e_vec_prime.e();} //calculate max values of each param
 			if(theta > thetamax){thetamax = theta;}
 			if(phi > phimax){phimax = phi;}
 			if(vz > vzmax){vzmax = vz;}
-			
-			E_vs_Theta.fill(theta,e_vec_prime.e());
-			z_vs_Theta.fill(theta,vz);
-			Phi_vs_Theta.fill(theta,phi);
+			if(theta > 5)
+			{
+				E_vs_Theta.fill(theta,e_vec_prime.e());
+				z_vs_Theta.fill(theta,vz);
+				Phi_vs_Theta.fill(theta,phi);
+			}
 		}
 	}
 }
@@ -132,3 +143,7 @@ can5.save("ZvsTheta.png");
 TCanvas can6 = new TCanvas("can", 800, 600);
 can6.draw(Phi_vs_Theta);
 can6.save("PhivsTheta.png");
+
+TCanvas can7 = new TCanvas("can", 800, 600);
+can7.draw(Phi_vs_W);
+can7.save("PhivsW.png");
