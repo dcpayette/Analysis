@@ -13,34 +13,39 @@ double enmax = en+0.1; //GeV
 double thetamax = 40;  //degrees
 double phimax = 3.2;   //radians
 double vzmax = 50;
+double wmax = 0;
+if(en > 7){wmax = 4.5;}
+else if(en > 4){wmax = 4;}
+else {wmax = 2.5;}
+
 HipoDataSource reader = new HipoDataSource();
 
 H1F momentum = new H1F("momentum", "momentum", 500, 0, 10);
 momentum.setTitleX("momentum");
 
-H1F W_hist = new H1F("W", "W", 500, 0, enmax);
+H1F W_hist = new H1F("W", "W", 500, 0, wmax);
 W_hist.setTitleX("W");
 
 H1F Q2_hist = new H1F("Q2", "Q2", 500, 0, enmax);
 Q2_hist.setTitleX("Q2");
 
-H2F W_vs_Q2 = new H2F("W_vs_Q2", "W_vs_Q2", 500, 0.0, enmax, 500, 0.0, enmax);
+H2F W_vs_Q2 = new H2F("W_vs_Q2", "W_vs_Q2", 500, 0.0, enmax, 500, 0.0, wmax);
 W_vs_Q2.setTitleX("Q2");
 W_vs_Q2.setTitleY("W");
 
-H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 0, thetamax, 500, 0, enmax);
+H2F E_vs_Theta = new H2F("E_vs_Theta", "E_vs_Theta", 500, 5, thetamax, 500, 0, enmax);
 E_vs_Theta.setTitleX("Theta");
 E_vs_Theta.setTitleY("E'");
 
-H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 0.1 , thetamax, 500, -vzmax, vzmax);
+H2F z_vs_Theta = new H2F("z_vs_Theta", "z_vs_Theta", 500, 5, thetamax, 500, -vzmax, vzmax);
 z_vs_Theta.setTitleX("Theta");
 z_vs_Theta.setTitleY("z vertex");
 
-H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 0, thetamax, 500, -phimax, phimax);
+H2F Phi_vs_Theta = new H2F("Phi_vs_Theta", "Phi_vs_Theta", 500, 5, thetamax, 500, -phimax, phimax);
 Phi_vs_Theta.setTitleX("Theta");
 Phi_vs_Theta.setTitleY("Phi");
 
-H2F Phi_vs_W = new H2F("Phi_vs_W", "Phi_vs_W", 500, 0, enmax, 500, -phimax, phimax);
+H2F Phi_vs_W = new H2F("Phi_vs_W", "Phi_vs_W", 500, 0, wmax, 500, -phimax, phimax);
 Phi_vs_W.setTitleX("W");
 Phi_vs_W.setTitleY("Phi");
 	
