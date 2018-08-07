@@ -11,7 +11,7 @@ import org.jlab.io.hipo.HipoDataSource;
 double en = Double.parseDouble(args[1]);
 double enmax = en+0.1; //GeV
 double thetamax = 40;  //degrees
-double phimax = 3.2;   //radians
+double phimax = 180;   //degrees
 double vzmax = 50;
 double wmax = 0;
 if(en > 7){wmax = 4.5;}
@@ -79,6 +79,7 @@ while (reader.hasEvent()) {
 			double phi = Math.atan2((double) py,(double) px);
 			double theta = Math.acos((double) pz/(double) mom);
 			theta *= 180/Math.PI;
+			phi *= 180/Math.PI;
 			float vz = bank_rec.getFloat("vz", k);	     
 			
 			if (pid != 11) continue;
@@ -89,8 +90,9 @@ while (reader.hasEvent()) {
 			LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
 			e_vec_prime.setVectM(e_vec_3, e_mass);
 			
-			if(e_vec_prime.e() < 0.1 * en){continue;}
-		
+			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
+			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
+			
 			LorentzVector q_vec = new LorentzVector(); //4 vector q
 			q_vec.copy(e_vec); //e - e'
 			q_vec.sub(e_vec_prime);
@@ -109,12 +111,11 @@ while (reader.hasEvent()) {
 			if(theta > thetamax){thetamax = theta;}
 			if(phi > phimax){phimax = phi;}
 			if(vz > vzmax){vzmax = vz;}
-			if(theta > 5)
-			{
-				E_vs_Theta.fill(theta,e_vec_prime.e());
-				z_vs_Theta.fill(theta,vz);
-				Phi_vs_Theta.fill(theta,phi);
-			}
+			
+			E_vs_Theta.fill(theta,e_vec_prime.e());
+			z_vs_Theta.fill(theta,vz);
+			Phi_vs_Theta.fill(theta,phi);
+			
 		}
 	}
 }
