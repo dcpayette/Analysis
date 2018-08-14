@@ -84,7 +84,7 @@ while (reader.hasEvent()) {
 			
 			if (pid != 11) continue;
 			
-			momentum.fill(mom);
+			
 			
 			Vector3 e_vec_3 = new Vector3(px, py, pz); //3 vector e'
 			LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
@@ -92,7 +92,7 @@ while (reader.hasEvent()) {
 			
 			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
-			
+			momentum.fill(mom);
 			LorentzVector q_vec = new LorentzVector(); //4 vector q
 			q_vec.copy(e_vec); //e - e'
 			q_vec.sub(e_vec_prime);
