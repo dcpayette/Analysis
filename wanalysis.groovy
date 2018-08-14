@@ -145,6 +145,7 @@ while (reader.hasEvent()) {
 			Cal_lu.fill(lu);
 			Cal_lv.fill(lv);
 			Cal_lw.fill(lw);
+			Cal_y_vs_x.fill(x,y);
 		}	
 	}
 }
@@ -194,6 +195,10 @@ can7.save("PhivsW.png");
 
 TCanvas can8 = new TCanvas("can", 800,600);
 can8.draw(Cal_y_vs_x_precut);
+can8.save("Calyvxprecut.png");
+
+TCanvas can12 = new TCanvas("can", 800,600);
+can8.draw(Cal_y_vs_x);
 can8.save("Calyvx.png");
 	   
 TCanvas can9 = new TCanvas("can", 800,600);
