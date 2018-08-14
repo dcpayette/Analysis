@@ -53,9 +53,9 @@ H2F Cal_y_vs_x_precut = new H2F("Cal_y_vs_x_precut", "Cal_y_vs_x_precut", 500, -
 Cal_y_vs_x_precut.setTitleX("X (cm)");
 Cal_y_vs_x_precut.setTitleY("Y (cm)");
 
-H1F Cal_lu = new H1F("Cal_lu", "Cal_lu", 500, 0, 1000); 
-H1F Cal_lv = new H1F("Cal_lv", "Cal_lv", 500, 0, 1000); 
-H1F Cal_lw = new H1F("Cal_lw", "Cal_lw", 500, 0, 1000); 
+H1F Cal_lu = new H1F("Cal_lu", "Cal_lu", 500, 0, 450); 
+H1F Cal_lv = new H1F("Cal_lv", "Cal_lv", 500, 0, 450); 
+H1F Cal_lw = new H1F("Cal_lw", "Cal_lw", 500, 0, 450); 
 
 H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -100, 100, 500, -100, 100);
 Cal_y_vs_x.setTitleX("X (cm)");
@@ -141,9 +141,10 @@ while (reader.hasEvent()) {
 			float lv = bank_cal.getFloat("lv",j);
 			float lw = bank_cal.getFloat("lw",j);
 			Cal_y_vs_x_precut.fill(x,y);
+			if(lu < 100 || lv < 100 || lw < 100){continue;}
 			Cal_lu.fill(lu);
 			Cal_lv.fill(lv);
-			Cal_lw.fill(lw);		
+			Cal_lw.fill(lw);
 		}	
 	}
 }
