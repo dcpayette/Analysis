@@ -83,6 +83,7 @@ while (reader.hasEvent()) {
 	 		//if(counter > 100){break;}
 		for (int k = 0; k < bank_rec.rows(); k++) {
 			int pid = bank_rec.getInt("pid", k);
+			byte q = ban_rec.getByte("charge", k);
 			float px = bank_rec.getFloat("px", k);
 			float py = bank_rec.getFloat("py", k);								
 			float pz = bank_rec.getFloat("pz", k);
@@ -94,8 +95,8 @@ while (reader.hasEvent()) {
 			phi *= 180/Math.PI;
 			float vz = bank_rec.getFloat("vz", k);	     
 			
-			if (pid != 11) continue;
-			
+			//if (pid != 11) continue;
+			if(q != -1) continue;
 			
 			
 			Vector3 e_vec_3 = new Vector3(px, py, pz); //3 vector e'
