@@ -50,8 +50,8 @@ Phi_vs_W.setTitleX("W");
 Phi_vs_W.setTitleY("Phi");
 
 H2F Cal_y_vs_x_precut = new H2F("Cal_y_vs_x_precut", "Cal_y_vs_x_precut", 500, -1000, 1000, 500, -1000, 1000);
-Cal_y_vs_x.setTitleX("X (cm)");
-Cal_y_vs_x.setTitleY("Y (cm)");
+Cal_y_vs_x_precut.setTitleX("X (cm)");
+Cal_y_vs_x_precut.setTitleY("Y (cm)");
 
 H1F Cal_lu = new H1F("Cal_lu", "Cal_lu", 500, 0, 1000); 
 H1F Cal_lv = new H1F("Cal_lv", "Cal_lv", 500, 0, 1000); 
@@ -132,7 +132,7 @@ while (reader.hasEvent()) {
 			
 		}
 	}
-	if(event.hasBank("RECHB::Calorimeter"){
+	if(event.hasBank("RECHB::Calorimeter")){
 		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
 		for(int j = 0; j < bank_cal.rows(); j++){
 			float x = bank_cal.getFloat("x",j);
