@@ -48,6 +48,18 @@ Phi_vs_Theta.setTitleY("Phi");
 H2F Phi_vs_W = new H2F("Phi_vs_W", "Phi_vs_W", 500, 0, wmax, 500, -phimax, phimax);
 Phi_vs_W.setTitleX("W");
 Phi_vs_W.setTitleY("Phi");
+
+H2F Cal_y_vs_x_precut = new H2F("Cal_y_vs_x_precut", "Cal_y_vs_x_precut", 500, -1000, 1000, 500, -1000, 1000);
+Cal_y_vs_x.setTitleX("X (cm)");
+Cal_y_vs_x.setTitleY("Y (cm)");
+
+H1F Cal_lu = new H1F("Cal_lu", "Cal_lu", 500, 0, 1000); 
+H1F Cal_lv = new H1F("Cal_lv", "Cal_lv", 500, 0, 1000); 
+H1F Cal_lw = new H1F("Cal_lw", "Cal_lw", 500, 0, 1000); 
+
+H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -100, 100, 500, -100, 100);
+Cal_y_vs_x.setTitleX("X (cm)");
+Cal_y_vs_x.setTitleY("Y (cm)");
 	
 double e_mass = 0.000511;
 double p_mass = 0.93827203;
@@ -116,9 +128,34 @@ while (reader.hasEvent()) {
 			z_vs_Theta.fill(theta,vz);
 			Phi_vs_Theta.fill(theta,phi);
 			
+			
+			
 		}
 	}
+	if(event.hasBank("RECHB::Calorimeter"){
+		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
+		for(int j = 0; j < bank_cal.rows(); j++){
+			float x = bank_cal.getFloat("x",j);
+			float y = bank_cal.getFloat("y",j);
+			float lu = bank_cal.getFloat("lu",j);
+			float lv = bank_cal.getFloat("lv",j);
+			float lw = bank_cal.getFloat("lw",j);
+			Cal_y_vs_x_precut.fill(x,y);
+			Cal_lu.fill(lu);
+			Cal_lv.fill(lv);
+			Cal_lw.fill(lw);		
+		}	
+	}
 }
+
+/*boolean dc_cut(float X, float Y, int S)
+{ 
+	boolean result= false;
+	if( (S==3 || S==4 || S==5 || (Y>X*Math.tan(Math.PI*((S-1)/3.-1./9)) && Y<X*Math.tan(Math.PI*((S-1)/3.+1./9))))
+	&& (S==1 || S==2 || S==6 || (Y<X*Math.tan(Math.PI*((S-1)/3.-1./9)) && Y>X*Math.tan(Math.PI*((S-1)/3.+1./9)))) ) result= true;
+  
+	return result;
+}*/
 
 System.out.println(emax + " " + thetamax + " " + phimax + " " + vzmax);
 
@@ -153,3 +190,20 @@ can6.save("PhivsTheta.png");
 TCanvas can7 = new TCanvas("can", 800, 600);
 can7.draw(Phi_vs_W);
 can7.save("PhivsW.png");
+
+TCanvas can8 = new TCanvas("can", 800,600);
+can8.draw(Cal_y_vs_x_precut);
+can8.save("Calyvx.png");
+	   
+TCanvas can9 = new TCanvas("can", 800,600);
+can9.draw(Cal_lu);
+can9.save("Callu.png");
+	   
+TCanvas can10 = new TCanvas("can", 800,600);
+can10.draw(Cal_lv);
+can10.save("Callv.png");
+	   
+TCanvas can11 = new TCanvas("can", 800,600);
+can11.draw(Cal_lw);
+can11.save("Callw.png");
+	   
