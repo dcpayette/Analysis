@@ -49,7 +49,7 @@ H2F Phi_vs_W = new H2F("Phi_vs_W", "Phi_vs_W", 500, 0, wmax, 500, -phimax, phima
 Phi_vs_W.setTitleX("W");
 Phi_vs_W.setTitleY("Phi");
 
-H2F Cal_y_vs_x_precut = new H2F("Cal_y_vs_x_precut", "Cal_y_vs_x_precut", 500, -1000, 1000, 500, -1000, 1000);
+H2F Cal_y_vs_x_precut = new H2F("Cal_y_vs_x_precut", "Cal_y_vs_x_precut", 500, -450,450, 500, -450,450);
 Cal_y_vs_x_precut.setTitleX("X (cm)");
 Cal_y_vs_x_precut.setTitleY("Y (cm)");
 
@@ -57,7 +57,7 @@ H1F Cal_lu = new H1F("Cal_lu", "Cal_lu", 500, 0, 450);
 H1F Cal_lv = new H1F("Cal_lv", "Cal_lv", 500, 0, 450); 
 H1F Cal_lw = new H1F("Cal_lw", "Cal_lw", 500, 0, 450); 
 
-H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -1000, 1000, 500, -1000, 1000);
+H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -450,450, 500, -450, 450);
 Cal_y_vs_x.setTitleX("X (cm)");
 Cal_y_vs_x.setTitleY("Y (cm)");
 	
