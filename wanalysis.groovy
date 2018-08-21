@@ -111,7 +111,6 @@ while (reader.hasEvent()) {
 
 			j = cal_cut_row(event, k);
 			if(j != -1){
-				sector = bank_cal.getByte("sector",j);
 				float x = bank_cal.getFloat("x",j);
 				float y = bank_cal.getFloat("y",j);
 				float lu = bank_cal.getFloat("lu",j);
