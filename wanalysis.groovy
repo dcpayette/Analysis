@@ -87,8 +87,8 @@ while (reader.hasEvent()) {
 		DataBank bank_rec = event.getBank("RECHB::Particle");
 		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
 		DataBank bank_traj = event.getBank("REC::Traj");
-			/*counter++;
-			if(counter > 100){break;}*/
+			counter++;
+			if(counter > 400){break;}
 		for (int k = 0; k < bank_rec.rows(); k++) {
 			int pid = bank_rec.getInt("pid", k);
 			byte q = bank_rec.getByte("charge", k);
