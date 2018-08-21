@@ -83,7 +83,7 @@ while (reader.hasEvent()) {
 	 		//if(counter > 100){break;}
 		for (int k = 0; k < bank_rec.rows(); k++) {
 			int pid = bank_rec.getInt("pid", k);
-			byte q = ban_rec.getByte("charge", k);
+			byte q = bank_rec.getByte("charge", k);
 			float px = bank_rec.getFloat("px", k);
 			float py = bank_rec.getFloat("py", k);								
 			float pz = bank_rec.getFloat("pz", k);
