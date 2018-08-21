@@ -118,7 +118,7 @@ while (reader.hasEvent()) {
 				float lv = bank_cal.getFloat("lv",j);
 				float lw = bank_cal.getFloat("lw",j);
 				Cal_y_vs_x_precut.fill(x,y);
-				if(lu < 350 && lu > 60 && lv < 370 && lw > 390){
+				if(lu < 350 && lu > 60 && lv < 370 && lw < 390){
 					Cal_lu.fill(lu);
 					Cal_lv.fill(lv);
 					Cal_lw.fill(lw);
