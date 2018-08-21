@@ -143,7 +143,7 @@ while (reader.hasEvent()) {
 				if(dc_cut(x_dc,y_dc,sector)){
 					System.out.println(theta_dc);
 					if(histmap.containsKey((int) Math.floor(theta_dc))){
-						histmap.get((int) Math.floor(theta_dc)).fill(phi_dc));
+						histmap.get((int) Math.floor(theta_dc)).fill(phi_dc);
 					}
 				}
 			}
