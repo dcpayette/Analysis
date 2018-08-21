@@ -74,13 +74,14 @@ phimax = 0;
 thetamax = 0;
 vzmax = 0;
 int counter = 0;
+int sector = 0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
-      	if (event.hasBank("REC::Particle")) {
-      	 	DataBank bank_rec = event.getBank("REC::Particle");
-	 		//counter++;
-	 		//if(counter > 100){break;}
+      	if (event.hasBank("RECHB::Particle") && event.hasBank("RECHB::Calorimeter")) {
+      	 	DataBank bank_rec = event.getBank("RECHB::Particle");
+	 		counter++;
+	 		if(counter > 100){break;}
 		for (int k = 0; k < bank_rec.rows(); k++) {
 			int pid = bank_rec.getInt("pid", k);
 			byte q = bank_rec.getByte("charge", k);
@@ -105,6 +106,9 @@ while (reader.hasEvent()) {
 			
 			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
+			
+			sector = cal_cut_sector(k);
+			System.out.println(sector);
 			momentum.fill(mom);
 			LorentzVector q_vec = new LorentzVector(); //4 vector q
 			q_vec.copy(e_vec); //e - e'
@@ -133,7 +137,7 @@ while (reader.hasEvent()) {
 			
 		}
 	}
-	if(event.hasBank("RECHB::Calorimeter")){
+	/*if(event.hasBank("RECHB::Calorimeter")){
 		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
 		for(int j = 0; j < bank_cal.rows(); j++){
 			float x = bank_cal.getFloat("x",j);
@@ -142,13 +146,13 @@ while (reader.hasEvent()) {
 			float lv = bank_cal.getFloat("lv",j);
 			float lw = bank_cal.getFloat("lw",j);
 			Cal_y_vs_x_precut.fill(x,y);
-			if(lu < 100 || lv < 100 || lw < 100){continue;}
+			if(lu > 350 || lu < 60 || lv > 370 || lw > 390){continue;}
 			Cal_lu.fill(lu);
 			Cal_lv.fill(lv);
 			Cal_lw.fill(lw);
 			Cal_y_vs_x.fill(x,y);
 		}	
-	}
+	}*/
 }
 
 /*boolean dc_cut(float X, float Y, int S)
@@ -159,6 +163,28 @@ while (reader.hasEvent()) {
   
 	return result;
 }*/
+
+int cal_cut_sector(int row){
+	DataBank bank_cal = event.getBank("RECHB::Calorimeter");
+	byte sector = -1;
+	for(int j = 0; j < bank_cal.rows(); j++){
+		int row_index = bank_cal.getInt("pindex",j);
+		if(row_index != row){continue;}
+		sector = bank_cal.getByte("sector",j);
+		float x = bank_cal.getFloat("x",j);
+		float y = bank_cal.getFloat("y",j);
+		float lu = bank_cal.getFloat("lu",j);
+		float lv = bank_cal.getFloat("lv",j);
+		float lw = bank_cal.getFloat("lw",j);
+		Cal_y_vs_x_precut.fill(x,y);
+		if(lu > 350 || lu < 60 || lv > 370 || lw > 390){continue;}
+		Cal_lu.fill(lu);
+		Cal_lv.fill(lv);
+		Cal_lw.fill(lw);
+		Cal_y_vs_x.fill(x,y);
+	}
+	return sector;
+}
 
 System.out.println(emax + " " + thetamax + " " + phimax + " " + vzmax);
 
