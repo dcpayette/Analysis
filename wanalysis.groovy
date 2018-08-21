@@ -75,13 +75,15 @@ thetamax = 0;
 vzmax = 0;
 int counter = 0;
 byte sector = 0;
+int j = 0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
-      	if (event.hasBank("RECHB::Particle") && event.hasBank("RECHB::Calorimeter")) {
-      	 	DataBank bank_rec = event.getBank("RECHB::Particle");
-	 		counter++;
-	 		if(counter > 100){break;}
+	if (event.hasBank("RECHB::Particle") && event.hasBank("RECHB::Calorimeter")) {
+		DataBank bank_rec = event.getBank("RECHB::Particle");
+		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
+			counter++;
+			if(counter > 100){break;}
 		for (int k = 0; k < bank_rec.rows(); k++) {
 			int pid = bank_rec.getInt("pid", k);
 			byte q = bank_rec.getByte("charge", k);
@@ -95,27 +97,43 @@ while (reader.hasEvent()) {
 			theta *= 180/Math.PI;
 			phi *= 180/Math.PI;
 			float vz = bank_rec.getFloat("vz", k);	     
-			
+
 			//if (pid != 11) continue;
 			if(q != -1) continue;
-			
-			
+
+
 			Vector3 e_vec_3 = new Vector3(px, py, pz); //3 vector e'
 			LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
 			e_vec_prime.setVectM(e_vec_3, e_mass);
-			
+
 			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
+
+			j = cal_cut_row(event, k);
+			if(j != -1){
+				int row_index = bank_cal.getInt("pindex",j);
+				if(row_index != row){continue;}
+				sector = bank_cal.getByte("sector",j);
+				float x = bank_cal.getFloat("x",j);
+				float y = bank_cal.getFloat("y",j);
+				float lu = bank_cal.getFloat("lu",j);
+				float lv = bank_cal.getFloat("lv",j);
+				float lw = bank_cal.getFloat("lw",j);
+				Cal_y_vs_x_precut.fill(x,y);
+				if(lu > 350 || lu < 60 || lv > 370 || lw > 390){continue;}
+				Cal_lu.fill(lu);
+				Cal_lv.fill(lv);
+				Cal_lw.fill(lw);
+				Cal_y_vs_x.fill(x,y);
+			}
 			
-			sector = cal_cut_sector(event, k);
-			System.out.println(sector);
 			momentum.fill(mom);
 			LorentzVector q_vec = new LorentzVector(); //4 vector q
 			q_vec.copy(e_vec); //e - e'
 			q_vec.sub(e_vec_prime);
 			double Q2 = -q_vec.mass2(); //-q^2
 			Q2_hist.fill(Q2);
-			
+
 			LorentzVector w_vec = new LorentzVector(); //4 vector used to calculate W
 			w_vec.copy(p_vec); //p-q
 			w_vec.add(q_vec);
@@ -123,18 +141,18 @@ while (reader.hasEvent()) {
 			W_hist.fill(W);
 			W_vs_Q2.fill(Q2,W);
 			Phi_vs_W.fill(W,phi);
-			
+
 			if(e_vec_prime.e()>emax){emax = e_vec_prime.e();} //calculate max values of each param
 			if(theta > thetamax){thetamax = theta;}
 			if(phi > phimax){phimax = phi;}
 			if(vz > vzmax){vzmax = vz;}
-			
+
 			E_vs_Theta.fill(theta,e_vec_prime.e());
 			z_vs_Theta.fill(theta,vz);
 			Phi_vs_Theta.fill(theta,phi);
-			
-			
-			
+
+
+
 		}
 	}
 	/*if(event.hasBank("RECHB::Calorimeter")){
@@ -155,6 +173,7 @@ while (reader.hasEvent()) {
 	}*/
 }
 
+
 /*boolean dc_cut(float X, float Y, int S)
 { 
 	boolean result= false;
@@ -164,26 +183,16 @@ while (reader.hasEvent()) {
 	return result;
 }*/
 
-byte cal_cut_sector(DataEvent event, int row){
+int cal_cut_row(DataEvent event, int row){
 	DataBank bank_cal = event.getBank("RECHB::Calorimeter");
-	byte sector = -1;
+	int row_index = 0;
+	int cal_row_match = -1;
 	for(int j = 0; j < bank_cal.rows(); j++){
-		int row_index = bank_cal.getInt("pindex",j);
+		row_index = bank_cal.getInt("pindex",j);
 		if(row_index != row){continue;}
-		sector = bank_cal.getByte("sector",j);
-		float x = bank_cal.getFloat("x",j);
-		float y = bank_cal.getFloat("y",j);
-		float lu = bank_cal.getFloat("lu",j);
-		float lv = bank_cal.getFloat("lv",j);
-		float lw = bank_cal.getFloat("lw",j);
-		Cal_y_vs_x_precut.fill(x,y);
-		if(lu > 350 || lu < 60 || lv > 370 || lw > 390){continue;}
-		Cal_lu.fill(lu);
-		Cal_lv.fill(lv);
-		Cal_lw.fill(lw);
-		Cal_y_vs_x.fill(x,y);
+		else{cal_row_match = row_index;}
 	}
-	return sector;
+	return cal_row_match;
 }
 
 System.out.println(emax + " " + thetamax + " " + phimax + " " + vzmax);
