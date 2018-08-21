@@ -110,7 +110,7 @@ while (reader.hasEvent()) {
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
 
 			j = cal_cut_row(event, k);
-			System.out.println(j + " " + bank_cal.rows());
+			//System.out.println(j + " " + bank_cal.rows());
 			if(j != -1){
 				float x = bank_cal.getFloat("x",j);
 				float y = bank_cal.getFloat("y",j);
@@ -188,8 +188,10 @@ int cal_cut_row(DataEvent event, int row){
 	int cal_row_match = -1;
 	for(int j = 0; j < bank_cal.rows(); j++){
 		row_index = bank_cal.getInt("pindex",j);
-		if(row_index != row){continue;}
-		else{cal_row_match = row_index;}
+		if(row_index == row){
+			cal_row_match = j;
+			break;
+		}
 	}
 	return cal_row_match;
 }
