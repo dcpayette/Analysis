@@ -74,7 +74,7 @@ phimax = 0;
 thetamax = 0;
 vzmax = 0;
 int counter = 0;
-int sector = 0;
+byte sector = 0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
@@ -107,7 +107,7 @@ while (reader.hasEvent()) {
 			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
 			
-			sector = cal_cut_sector(k);
+			sector = cal_cut_sector(event, k);
 			System.out.println(sector);
 			momentum.fill(mom);
 			LorentzVector q_vec = new LorentzVector(); //4 vector q
@@ -164,7 +164,7 @@ while (reader.hasEvent()) {
 	return result;
 }*/
 
-int cal_cut_sector(int row){
+byte cal_cut_sector(DataEvent event, int row){
 	DataBank bank_cal = event.getBank("RECHB::Calorimeter");
 	byte sector = -1;
 	for(int j = 0; j < bank_cal.rows(); j++){
