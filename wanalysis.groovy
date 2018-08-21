@@ -111,8 +111,6 @@ while (reader.hasEvent()) {
 
 			j = cal_cut_row(event, k);
 			if(j != -1){
-				int row_index = bank_cal.getInt("pindex",j);
-				if(row_index != row){continue;}
 				sector = bank_cal.getByte("sector",j);
 				float x = bank_cal.getFloat("x",j);
 				float y = bank_cal.getFloat("y",j);
@@ -120,11 +118,12 @@ while (reader.hasEvent()) {
 				float lv = bank_cal.getFloat("lv",j);
 				float lw = bank_cal.getFloat("lw",j);
 				Cal_y_vs_x_precut.fill(x,y);
-				if(lu > 350 || lu < 60 || lv > 370 || lw > 390){continue;}
-				Cal_lu.fill(lu);
-				Cal_lv.fill(lv);
-				Cal_lw.fill(lw);
-				Cal_y_vs_x.fill(x,y);
+				if(lu < 350 && lu > 60 && lv < 370 && lw > 390){
+					Cal_lu.fill(lu);
+					Cal_lv.fill(lv);
+					Cal_lw.fill(lw);
+					Cal_y_vs_x.fill(x,y);
+				}
 			}
 			
 			momentum.fill(mom);
