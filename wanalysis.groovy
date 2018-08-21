@@ -110,7 +110,7 @@ while (reader.hasEvent()) {
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
 
 			j = cal_cut_row(event, k);
-			System.out.println(j);
+			System.out.println(j + " " + bank_cal.rows());
 			if(j != -1){
 				float x = bank_cal.getFloat("x",j);
 				float y = bank_cal.getFloat("y",j);
