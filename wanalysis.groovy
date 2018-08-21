@@ -60,6 +60,9 @@ H1F Cal_lw = new H1F("Cal_lw", "Cal_lw", 500, 0, 450);
 H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -450,450, 500, -450, 450);
 Cal_y_vs_x.setTitleX("X (cm)");
 Cal_y_vs_x.setTitleY("Y (cm)");
+
+HashMap<Integer,H1F> histmap = new HashMap<Integer,H1F>();
+for(int i = 5; i <= 20; i++){HistMap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
 	
 double e_mass = 0.000511;
 double p_mass = 0.93827203;
@@ -75,13 +78,15 @@ thetamax = 0;
 vzmax = 0;
 int counter = 0;
 byte sector = 0;
-int j = 0;
+int cal_row = 0;
+int dc_row = 0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
-	if (event.hasBank("RECHB::Particle") && event.hasBank("RECHB::Calorimeter")) {
+	if (event.hasBank("RECHB::Particle") && event.hasBank("RECHB::Calorimeter") && event.hasBank("REC::Traj")) {
 		DataBank bank_rec = event.getBank("RECHB::Particle");
 		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
+		DataBank bank_traj = event.getBank("REC::Traj");
 			/*counter++;
 			if(counter > 100){break;}*/
 		for (int k = 0; k < bank_rec.rows(); k++) {
@@ -109,20 +114,37 @@ while (reader.hasEvent()) {
 			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
 			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
 
-			j = cal_cut_row(event, k);
+			cal_row = cal_cut_row(event, k);
 			//System.out.println(j + " " + bank_cal.rows());
-			if(j != -1){
-				float x = bank_cal.getFloat("x",j);
-				float y = bank_cal.getFloat("y",j);
-				float lu = bank_cal.getFloat("lu",j);
-				float lv = bank_cal.getFloat("lv",j);
-				float lw = bank_cal.getFloat("lw",j);
-				Cal_y_vs_x_precut.fill(x,y);
+			if(cal_row != -1){
+				sector = bank_cal.getByte("sector",cal_row);
+				float x_cal = bank_cal.getFloat("x",cal_row);
+				float y_cal = bank_cal.getFloat("y",cal_row);
+				float lu = bank_cal.getFloat("lu",cal_row);
+				float lv = bank_cal.getFloat("lv",cal_row);
+				float lw = bank_cal.getFloat("lw",cal_row);
+				Cal_y_vs_x_precut.fill(x_cal,y_cal);
 				if(lu < 350 && lu > 60 && lv < 370 && lw < 390){
 					Cal_lu.fill(lu);
 					Cal_lv.fill(lv);
 					Cal_lw.fill(lw);
-					Cal_y_vs_x.fill(x,y);
+					Cal_y_vs_x.fill(x_cal,y_cal);
+				}
+			}
+			
+			dc_row = dc_cut_row(event, k);
+			if(dc_row != -1){
+				float x_dc = bank_traj.getFloat("x",dc_row);
+				float y_dc = bank_traj.getFloat("y",dc_row);
+				float z_dc = bank_traj.getFloat("z",dc_row);
+				double pos = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
+				double theta_dc = Math.acos((double) z_dc/ pos);
+				double phi_dc = Math.atan2((double) y_dc,(double) x_dc);
+				if(dc_cut(x_dc,y_dc,sector)){
+					System.out.println(theta_dc);
+					if(histmap.containsKey((int) Math.floor(theta_dc))){
+						histmap.get((int) Math.floor(theta_dc)).fill(phi_dc));
+					}
 				}
 			}
 			
@@ -173,14 +195,14 @@ while (reader.hasEvent()) {
 }
 
 
-/*boolean dc_cut(float X, float Y, int S)
+boolean dc_cut(float X, float Y, int S)
 { 
 	boolean result= false;
 	if( (S==3 || S==4 || S==5 || (Y>X*Math.tan(Math.PI*((S-1)/3.-1./9)) && Y<X*Math.tan(Math.PI*((S-1)/3.+1./9))))
 	&& (S==1 || S==2 || S==6 || (Y<X*Math.tan(Math.PI*((S-1)/3.-1./9)) && Y>X*Math.tan(Math.PI*((S-1)/3.+1./9)))) ) result= true;
   
 	return result;
-}*/
+}
 
 int cal_cut_row(DataEvent event, int row){
 	DataBank bank_cal = event.getBank("RECHB::Calorimeter");
@@ -195,6 +217,23 @@ int cal_cut_row(DataEvent event, int row){
 	}
 	return cal_row_match;
 }
+
+int dc_cut_row(DataEvent event, int row){
+	DataBank bank_traj = event.getBank("REC::Traj");
+	int row_index = 0;
+	int det_id = 0;
+	int cal_row_match = -1;
+	for(int j = 0; j < bank_traj.rows(); j++){
+		row_index = bank_traj.getInt("pindex",j);
+		det_id = bank_traj.getInt("detId",j);
+		if(row_index == row && det_id == 6){
+			cal_row_match = j;
+			break;
+		}
+	}
+	return cal_row_match;
+}
+
 
 System.out.println(emax + " " + thetamax + " " + phimax + " " + vzmax);
 
@@ -249,4 +288,11 @@ can10.save("Callv.png");
 TCanvas can11 = new TCanvas("can", 800,600);
 can11.draw(Cal_lw);
 can11.save("Callw.png");
+
+HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
+for(int i : histmap.keySet()){
+	canvasmap.put(i, new TCanvas("can", 800,600));
+	canvasmap.get(i).draw(histmap.get(i));
+	canvasmap.get(i).save("phivstheta" + i + ".png");
+}
 	   
