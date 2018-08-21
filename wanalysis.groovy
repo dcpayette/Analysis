@@ -198,8 +198,8 @@ while (reader.hasEvent()) {
 boolean dc_cut(float X, float Y, int S)
 { 
 	boolean result= false;
-	if( (S==3 || S==4 || S==5 || (Y>X*Math.tan(Math.PI*((S-1)/3.-1./9)) && Y<X*Math.tan(Math.PI*((S-1)/3.+1./9))))
-	&& (S==1 || S==2 || S==6 || (Y<X*Math.tan(Math.PI*((S-1)/3.-1./9)) && Y>X*Math.tan(Math.PI*((S-1)/3.+1./9)))) ) result= true;
+	if( (S==3 || S==4 || S==5 || (Y>X*Math.tan(Math.PI*((S-1)/3.0-1.0/9)) && Y<X*Math.tan(Math.PI*((S-1)/3.0+1.0/9))))
+	&& (S==1 || S==2 || S==6 || (Y<X*Math.tan(Math.PI*((S-1)/3.0-1.0/9)) && Y>X*Math.tan(Math.PI*((S-1)/3.0+1.0/9)))) ) result= true;
   
 	return result;
 }
