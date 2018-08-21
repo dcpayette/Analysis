@@ -62,7 +62,7 @@ Cal_y_vs_x.setTitleX("X (cm)");
 Cal_y_vs_x.setTitleY("Y (cm)");
 
 HashMap<Integer,H1F> histmap = new HashMap<Integer,H1F>();
-for(int i = 5; i <= 20; i++){HistMap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
+for(int i = 5; i <= 20; i++){histmap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
 	
 double e_mass = 0.000511;
 double p_mass = 0.93827203;
