@@ -140,6 +140,8 @@ while (reader.hasEvent()) {
 				double pos = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
 				double theta_dc = Math.acos((double) z_dc/ pos);
 				double phi_dc = Math.atan2((double) y_dc,(double) x_dc);
+				theta_dc *= 180/Math.PI;
+				phi_dc *= 180/Math.PI;
 				if(dc_cut(x_dc,y_dc,sector)){
 					System.out.println(theta_dc);
 					if(histmap.containsKey((int) Math.floor(theta_dc))){
