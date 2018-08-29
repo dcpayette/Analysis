@@ -142,12 +142,12 @@ while (reader.hasEvent()) {
 				double phi_dc = Math.atan2((double) y_dc,(double) x_dc);
 				theta_dc *= 180/Math.PI;
 				phi_dc *= 180/Math.PI;
-				if(dc_cut(x_dc,y_dc,sector)){
-					System.out.println(theta_dc);
+				//if(dc_cut(x_dc,y_dc,sector)){
+					//System.out.println(theta_dc);
 					if(histmap.containsKey((int) Math.floor(theta_dc))){
 						histmap.get((int) Math.floor(theta_dc)).fill(phi_dc);
 					}
-				}
+				//}
 			}
 			
 			momentum.fill(mom);
