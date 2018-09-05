@@ -94,14 +94,14 @@ byte sector = 0;
 int cal_row = 0;
 int dc_row = 0;
 int htcc_row = 0;
-float x_dc = 1000;
-float y_dc = 1000;
-float z_dc = 1000;
-float x_htcc = 1000;
-float y_htcc = 1000;
-float z_htcc = 1000;
-double phi_dc = 1000;
-double phi_htcc = 1000;
+float x_dc = 1000.;
+float y_dc = 1000.;
+float z_dc = 1000.;
+float x_htcc = 1000.;
+float y_htcc = 1000.;
+float z_htcc = 1000.;
+double phi_dc = 1000.;
+double phi_htcc = 1000.;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
@@ -109,7 +109,7 @@ while (reader.hasEvent()) {
 		DataBank bank_rec = event.getBank("RECHB::Particle");
 		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
 		DataBank bank_traj = event.getBank("REC::Traj");
-			//counter++;
+			counter++;
 			//if(counter > 400){break;}
 		for (int k = 0; k < bank_rec.rows(); k++) {
 			int pid = bank_rec.getInt("pid", k);
@@ -184,15 +184,17 @@ while (reader.hasEvent()) {
 			}
 			if(dc_row != -1 && htcc_row != -1)
 			{
-				if(x_htcc != 1000 && x_dc != 1000)
+				if(counter%1000 == 1) System.out.println(dc_row + " " + htcc_row);
+				
+				if(x_htcc != 1000. && x_dc != 1000.)
 				{	  
 					  DCXvsHTCCX.fill(x_dc,x_dc-x_htcc);
 				}
-				if(y_htcc != 1000 && y_dc != 1000)
+				if(y_htcc != 1000. && y_dc != 1000.)
 				{	  
 					  DCYvsHTCCY.fill(y_dc,y_dc-y_htcc);
 				}
-				if(phi_htcc != 1000 && phi_dc != 1000)
+				if(phi_htcc != 1000. && phi_dc != 1000.)
 				{					  
 					  DCPhivsHTCCPhi.fill(phi_dc ,phi_dc-phi_htcc);
 				}	  
