@@ -225,10 +225,12 @@ int dc_cut_row(DataEvent event, int row){
 	int row_index = 0;
 	int det_id = 0;
 	int cal_row_match = -1;
+	float path_length = 0;
 	for(int j = 0; j < bank_traj.rows(); j++){
 		row_index = bank_traj.getInt("pindex",j);
 		det_id = bank_traj.getInt("detId",j);
-		if(row_index == row && det_id == 6){
+		path_length = bank_traj.getFloat("pathlength",j);
+		if(row_index == row && path_length > 250 && path_length < 550){
 			cal_row_match = j;
 			break;
 		}
