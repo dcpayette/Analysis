@@ -184,7 +184,7 @@ while (reader.hasEvent()) {
 			}
 			if(dc_row != -1 && htcc_row != -1)
 			{
-				if(counter%1000 == 1) System.out.println(dc_row + " " + htcc_row);
+				//if(counter%1000 == 1) System.out.println(dc_row + " " + htcc_row);
 				
 				if(x_htcc != 1000.0 && x_dc != 1000.0)
 				{	  
