@@ -61,6 +61,15 @@ H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -450,450, 500, -450, 4
 Cal_y_vs_x.setTitleX("X (cm)");
 Cal_y_vs_x.setTitleY("Y (cm)");
 
+H2F DCXvsHTCCX = new H2F("DCXvsHTCCX", "DCXvsHTCCX", 500, -450,450,500,-450,450);
+DCXvsHTCCX.setTitleX("HTCC X");
+DCXvsHTCCX.setTitleY("DC X");
+
+
+H2F DCPhivsHTCCPhi = new H2F("DCPhivsHTCCPhi", "DCPhivsHTCCPhi", 500, -180,180,500,-180,180);
+DCPhivsHTCCPhi.setTitleX("HTCC Phi");
+DCPhivsHTCCPhi.setTitleY("DC Phi");
+
 HashMap<Integer,H1F> histmap = new HashMap<Integer,H1F>();
 for(int i = 5; i <= 20; i++){histmap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
 	
@@ -80,6 +89,7 @@ int counter = 0;
 byte sector = 0;
 int cal_row = 0;
 int dc_row = 0;
+int htcc_row = 0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
@@ -137,8 +147,8 @@ while (reader.hasEvent()) {
 				float x_dc = bank_traj.getFloat("x",dc_row);
 				float y_dc = bank_traj.getFloat("y",dc_row);
 				float z_dc = bank_traj.getFloat("z",dc_row);
-				double pos = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
-				double theta_dc = Math.acos((double) z_dc/ pos);
+				double pos_dc = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
+				double theta_dc = Math.acos((double) z_dc/ pos_dc);
 				double phi_dc = Math.atan2((double) y_dc,(double) x_dc);
 				theta_dc *= 180/Math.PI;
 				phi_dc *= 180/Math.PI;
@@ -148,6 +158,22 @@ while (reader.hasEvent()) {
 						histmap.get((int) Math.floor(theta_dc)).fill(phi_dc);
 					}
 				//}
+			}
+			htcc_row = htcc_cut_row(event,k);
+			if(htcc_row != -1){
+				float x_htcc = bank_traj.getFloat("x",htcc_row);
+				float y_htcc = bank_traj.getFloat("y",htcc_row);
+				float z_htcc = bank_traj.getFloat("z",htcc_row);
+				double pos_htcc = Math.sqrt(x_htcc*x_htcc + y_htcc*y_htcc + z_htcc*z_htcc);
+				double theta_htcc = Math.acos((double) z_htcc/ pos_htcc);
+				double phi_htcc = Math.atan2((double) y_htcc,(double) x_htcc);
+				theta_htcc *= 180/Math.PI;
+				phi_htcc *= 180/Math.PI;
+			}
+			if(dc_row != -1 && htcc_row != -1)
+			{
+				DCXvsHTCCX.fill(x_htcc,x_dc);
+				DCPhivsHTCCPhi.fill(phi_htcc,dc_htcc);
 			}
 			
 			momentum.fill(mom);
@@ -237,6 +263,23 @@ int dc_cut_row(DataEvent event, int row){
 	}
 	return cal_row_match;
 }
+int htcc_cut_row(DataEvent event, int row){
+	DataBank bank_traj = event.getBank("REC::Traj");
+	int row_index = 0;
+	int det_id = 0;
+	int htcc_row_match = -1;
+	float path_length = 0;
+	for(int j = 0; j < bank_traj.rows(); j++){
+		row_index = bank_traj.getInt("pindex",j);
+		det_id = bank_traj.getInt("detId",j);
+		//path_length = bank_traj.getFloat("pathlength",j);
+		if(row_index == row && det_id == 0){
+			htcc_row_match = j;
+			break;
+		}
+	}
+	return htcc_row_match;
+}
 
 
 System.out.println(emax + " " + thetamax + " " + phimax + " " + vzmax);
@@ -276,10 +319,6 @@ can7.save("PhivsW.png");
 TCanvas can8 = new TCanvas("can", 800,600);
 can8.draw(Cal_y_vs_x_precut);
 can8.save("Calyvxprecut.png");
-
-TCanvas can12 = new TCanvas("can", 800,600);
-can12.draw(Cal_y_vs_x);
-can12.save("Calyvx.png");
 	   
 TCanvas can9 = new TCanvas("can", 800,600);
 can9.draw(Cal_lu);
@@ -292,6 +331,18 @@ can10.save("Callv.png");
 TCanvas can11 = new TCanvas("can", 800,600);
 can11.draw(Cal_lw);
 can11.save("Callw.png");
+
+TCanvas can12 = new TCanvas("can", 800,600);
+can12.draw(Cal_y_vs_x);
+can12.save("Calyvx.png");
+	   
+TCanvas can13 = new TCanvas("can", 800,600);
+can13.draw(DCXvsHTCCX);
+can13.save("DCXvsHTCCX.png");
+
+TCanvas can14 = new TCanvas("can", 800,600);
+can14.draw(DCPhivsHTCCPhi);
+can14.save("DCPhivsHTCCPhi.png");
 
 HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
 for(int i : histmap.keySet()){
