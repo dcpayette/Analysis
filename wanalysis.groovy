@@ -61,14 +61,18 @@ H2F Cal_y_vs_x = new H2F("Cal_y_vs_x", "Cal_y_vs_x", 500, -450,450, 500, -450, 4
 Cal_y_vs_x.setTitleX("X (cm)");
 Cal_y_vs_x.setTitleY("Y (cm)");
 
-H2F DCXvsHTCCX = new H2F("DCXvsHTCCX", "DCXvsHTCCX", 500, -450,450,500,-450,450);
-DCXvsHTCCX.setTitleX("HTCC X");
-DCXvsHTCCX.setTitleY("DC X");
+H2F DCXvsHTCCX = new H2F("DCXvsHTCCX", "DCXvsHTCCX", 500, -450,450,500,-50,50);
+DCXvsHTCCX.setTitleX("DC X");
+DCXvsHTCCX.setTitleY("delta X");
+
+H2F DCYvsHTCCY = new H2F("DCYvsHTCCY", "DCYvsHTCCY", 500, -450,450,500,-50,50);
+DCYvsHTCCY.setTitleX("DC Y");
+DCYvsHTCCY.setTitleY("delta Y");
 
 
-H2F DCPhivsHTCCPhi = new H2F("DCPhivsHTCCPhi", "DCPhivsHTCCPhi", 500, -180,180,500,-180,180);
-DCPhivsHTCCPhi.setTitleX("HTCC Phi");
-DCPhivsHTCCPhi.setTitleY("DC Phi");
+H2F DCPhivsHTCCPhi = new H2F("DCPhivsHTCCPhi", "DCPhivsHTCCPhi", 500, -180,180,500,-10,10);
+DCPhivsHTCCPhi.setTitleX("DC Phi");
+DCPhivsHTCCPhi.setTitleY("delta Phi");
 
 HashMap<Integer,H1F> histmap = new HashMap<Integer,H1F>();
 for(int i = 5; i <= 20; i++){histmap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
@@ -182,11 +186,15 @@ while (reader.hasEvent()) {
 			{
 				if(x_htcc != 1000 && x_dc != 1000)
 				{	  
-					  DCXvsHTCCX.fill(x_htcc,x_dc);
+					  DCXvsHTCCX.fill(x_dc,x_dc-x_htcc);
+				}
+				if(y_htcc != 1000 && y_dc != 1000)
+				{	  
+					  DCYvsHTCCY.fill(y_dc,y_dc-y_htcc);
 				}
 				if(phi_htcc != 1000 && phi_dc != 1000)
 				{					  
-					  DCPhivsHTCCPhi.fill(phi_htcc,phi_dc);
+					  DCPhivsHTCCPhi.fill(phi_dc ,phi_dc-phi_htcc);
 				}	  
 			}
 			
@@ -357,6 +365,10 @@ can13.save("DCXvsHTCCX.png");
 TCanvas can14 = new TCanvas("can", 800,600);
 can14.draw(DCPhivsHTCCPhi);
 can14.save("DCPhivsHTCCPhi.png");
+
+TCanvas can15 = new TCanvas("can", 800,600);
+can15.draw(DCYvsHTCCY);
+can15.save("DCYvsHTCCY.png");
 
 HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
 for(int i : histmap.keySet()){
