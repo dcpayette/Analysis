@@ -94,14 +94,14 @@ byte sector = 0;
 int cal_row = 0;
 int dc_row = 0;
 int htcc_row = 0;
-float x_dc = 1000.;
-float y_dc = 1000.;
-float z_dc = 1000.;
-float x_htcc = 1000.;
-float y_htcc = 1000.;
-float z_htcc = 1000.;
-double phi_dc = 1000.;
-double phi_htcc = 1000.;
+float x_dc = 1000.0;
+float y_dc = 1000.0;
+float z_dc = 1000.0;
+float x_htcc = 1000.0;
+float y_htcc = 1000.0;
+float z_htcc = 1000.0;
+double phi_dc = 1000.0;
+double phi_htcc = 1000.0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
@@ -186,15 +186,15 @@ while (reader.hasEvent()) {
 			{
 				if(counter%1000 == 1) System.out.println(dc_row + " " + htcc_row);
 				
-				if(x_htcc != 1000. && x_dc != 1000.)
+				if(x_htcc != 1000.0 && x_dc != 1000.0)
 				{	  
 					  DCXvsHTCCX.fill(x_dc,x_dc-x_htcc);
 				}
-				if(y_htcc != 1000. && y_dc != 1000.)
+				if(y_htcc != 1000.0 && y_dc != 1000.0)
 				{	  
 					  DCYvsHTCCY.fill(y_dc,y_dc-y_htcc);
 				}
-				if(phi_htcc != 1000. && phi_dc != 1000.)
+				if(phi_htcc != 1000.0 && phi_dc != 1000.0)
 				{					  
 					  DCPhivsHTCCPhi.fill(phi_dc ,phi_dc-phi_htcc);
 				}	  
