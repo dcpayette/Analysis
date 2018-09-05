@@ -90,6 +90,14 @@ byte sector = 0;
 int cal_row = 0;
 int dc_row = 0;
 int htcc_row = 0;
+float x_dc = 1000;
+float y_dc = 1000;
+float z_dc = 1000;
+float x_htcc = 1000;
+float y_htcc = 1000;
+float z_htcc = 1000;
+double phi_dc = 1000;
+double phi_htcc = 1000;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
@@ -144,12 +152,12 @@ while (reader.hasEvent()) {
 			
 			dc_row = dc_cut_row(event, k);
 			if(dc_row != -1){
-				float x_dc = bank_traj.getFloat("x",dc_row);
-				float y_dc = bank_traj.getFloat("y",dc_row);
-				float z_dc = bank_traj.getFloat("z",dc_row);
+				x_dc = bank_traj.getFloat("x",dc_row);
+				y_dc = bank_traj.getFloat("y",dc_row);
+				z_dc = bank_traj.getFloat("z",dc_row);
 				double pos_dc = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
 				double theta_dc = Math.acos((double) z_dc/ pos_dc);
-				double phi_dc = Math.atan2((double) y_dc,(double) x_dc);
+				phi_dc = Math.atan2((double) y_dc,(double) x_dc);
 				theta_dc *= 180/Math.PI;
 				phi_dc *= 180/Math.PI;
 				//if(dc_cut(x_dc,y_dc,sector)){
@@ -161,19 +169,25 @@ while (reader.hasEvent()) {
 			}
 			htcc_row = htcc_cut_row(event,k);
 			if(htcc_row != -1){
-				float x_htcc = bank_traj.getFloat("x",htcc_row);
-				float y_htcc = bank_traj.getFloat("y",htcc_row);
-				float z_htcc = bank_traj.getFloat("z",htcc_row);
+				x_htcc = bank_traj.getFloat("x",htcc_row);
+				y_htcc = bank_traj.getFloat("y",htcc_row);
+				z_htcc = bank_traj.getFloat("z",htcc_row);
 				double pos_htcc = Math.sqrt(x_htcc*x_htcc + y_htcc*y_htcc + z_htcc*z_htcc);
 				double theta_htcc = Math.acos((double) z_htcc/ pos_htcc);
-				double phi_htcc = Math.atan2((double) y_htcc,(double) x_htcc);
+				phi_htcc = Math.atan2((double) y_htcc,(double) x_htcc);
 				theta_htcc *= 180/Math.PI;
 				phi_htcc *= 180/Math.PI;
 			}
 			if(dc_row != -1 && htcc_row != -1)
 			{
-				DCXvsHTCCX.fill(x_htcc,x_dc);
-				DCPhivsHTCCPhi.fill(phi_htcc,dc_htcc);
+				if(x_htcc != 1000 && x_dc != 1000)
+				{	  
+					  DCXvsHTCCX.fill(x_htcc,x_dc);
+				}
+				if(phi_htcc != 1000 && phi_dc != 1000)
+				{					  
+					  DCPhivsHTCCPhi.fill(phi_htcc,phi_dc);
+				}	  
 			}
 			
 			momentum.fill(mom);
