@@ -105,9 +105,9 @@ double phi_htcc = 1000.0;
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
-	if (event.hasBank("RECHB::Particle") && event.hasBank("RECHB::Calorimeter") && event.hasBank("REC::Traj")) {
-		DataBank bank_rec = event.getBank("RECHB::Particle");
-		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
+	if (event.hasBank("REC::Particle") && event.hasBank("REC::Calorimeter") && event.hasBank("REC::Traj")) {
+		DataBank bank_rec = event.getBank("REC::Particle");
+		DataBank bank_cal = event.getBank("REC::Calorimeter");
 		DataBank bank_traj = event.getBank("REC::Traj");
 			counter++;
 			//if(counter > 400){break;}
@@ -257,7 +257,7 @@ boolean dc_cut(float X, float Y, int S)
 }
 
 int cal_cut_row(DataEvent event, int row){
-	DataBank bank_cal = event.getBank("RECHB::Calorimeter");
+	DataBank bank_cal = event.getBank("REC::Calorimeter");
 	int row_index = 0;
 	int cal_row_match = -1;
 	for(int j = 0; j < bank_cal.rows(); j++){
