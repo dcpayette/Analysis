@@ -74,6 +74,19 @@ H2F DCPhivsHTCCPhi = new H2F("DCPhivsHTCCPhi", "DCPhivsHTCCPhi", 500, -180,180,5
 DCPhivsHTCCPhi.setTitleX("DC Phi");
 DCPhivsHTCCPhi.setTitleY("delta Phi");
 
+H2F PhiPvsPhiE = new H2F("PhiPvsPhiE","PhiPvsPhiE",500, -180, 180, 500, -180, 180);
+PhiPvsPhiE.setTitleX("Phi Electron");
+PhiPvsPhiE.setTitleY("Phi Proton");
+
+H2F EnPvsEnE = new H2F("EnPvsEnE","EnPvsEnE",500, 0 , enmax, 500, 0 , enmax);
+EnPvsEnE.setTitleX("Energy Electron");
+EnPvsEnE.setTitleY("Energy Proton");
+
+H2F ZPvsZE = new H2F("ZPvsZE","ZPvsZE",500, 0 , enmax, 500, 0 , enmax);
+ZPvsZE.setTitleX("vertex Electron");
+ZPvsZE.setTitleY("vertex Proton");
+
+
 HashMap<Integer,H1F> histmap = new HashMap<Integer,H1F>();
 for(int i = 5; i <= 20; i++){histmap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
 	
@@ -126,107 +139,134 @@ while (reader.hasEvent()) {
 			float vz = bank_rec.getFloat("vz", k);	     
 
 			//if (pid != 11) continue;
-			if(q != -1) continue;
+			//if(q != -1) continue;
 
-
-			Vector3 e_vec_3 = new Vector3(px, py, pz); //3 vector e'
-			LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
-			e_vec_prime.setVectM(e_vec_3, e_mass);
-
-			if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
-			if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
-
-			cal_row = cal_cut_row(event, k);
-			//System.out.println(j + " " + bank_cal.rows());
-			if(cal_row != -1){
-				sector = bank_cal.getByte("sector",cal_row);
-				float x_cal = bank_cal.getFloat("x",cal_row);
-				float y_cal = bank_cal.getFloat("y",cal_row);
-				float lu = bank_cal.getFloat("lu",cal_row);
-				float lv = bank_cal.getFloat("lv",cal_row);
-				float lw = bank_cal.getFloat("lw",cal_row);
-				Cal_y_vs_x_precut.fill(x_cal,y_cal);
-				if(lu < 350 && lu > 60 && lv < 370 && lw < 390){
-					Cal_lu.fill(lu);
-					Cal_lv.fill(lv);
-					Cal_lw.fill(lw);
-					Cal_y_vs_x.fill(x_cal,y_cal);
-				}
-			}
-			
-			dc_row = dc_cut_row(event, k);
-			if(dc_row != -1){
-				x_dc = bank_traj.getFloat("x",dc_row);
-				y_dc = bank_traj.getFloat("y",dc_row);
-				z_dc = bank_traj.getFloat("z",dc_row);
-				double pos_dc = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
-				double theta_dc = Math.acos((double) z_dc/ pos_dc);
-				phi_dc = Math.atan2((double) y_dc,(double) x_dc);
-				theta_dc *= 180/Math.PI;
-				phi_dc *= 180/Math.PI;
-				//if(dc_cut(x_dc,y_dc,sector)){
-					//System.out.println(theta_dc);
-					if(histmap.containsKey((int) Math.floor(theta_dc))){
-						histmap.get((int) Math.floor(theta_dc)).fill(phi_dc);
-					}
-				//}
-			}
-			htcc_row = htcc_cut_row(event,k);
-			if(htcc_row != -1){
-				x_htcc = bank_traj.getFloat("x",htcc_row);
-				y_htcc = bank_traj.getFloat("y",htcc_row);
-				z_htcc = bank_traj.getFloat("z",htcc_row);
-				double pos_htcc = Math.sqrt(x_htcc*x_htcc + y_htcc*y_htcc + z_htcc*z_htcc);
-				double theta_htcc = Math.acos((double) z_htcc/ pos_htcc);
-				phi_htcc = Math.atan2((double) y_htcc,(double) x_htcc);
-				theta_htcc *= 180/Math.PI;
-				phi_htcc *= 180/Math.PI;
-			}
-			if(dc_row != -1 && htcc_row != -1)
-			{
-				//if(counter%1000 == 1) System.out.println(dc_row + " " + htcc_row);
+			if(pid == 11){
+				float e_px = px; 
+				float e_py = py; 
+				float e_pz = pz; 
+				float e_beta = beta;
+				float e_mom = mom; 
+				float e_phi = phi; 
+				float e_theta = theta; 
+				float e_vz = vz; 
 				
-				if(x_htcc != 1000.0 && x_dc != 1000.0)
-				{	  
-					  DCXvsHTCCX.fill(x_dc,x_dc-x_htcc);
+				Vector3 e_vec_3 = new Vector3(px, py, pz); //3 vector e'
+				LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
+				e_vec_prime.setVectM(e_vec_3, e_mass);
+				if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
+				if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
+
+				cal_row = cal_cut_row(event, k);
+				//System.out.println(j + " " + bank_cal.rows());
+				if(cal_row != -1){
+					sector = bank_cal.getByte("sector",cal_row);
+					float x_cal = bank_cal.getFloat("x",cal_row);
+					float y_cal = bank_cal.getFloat("y",cal_row);
+					float lu = bank_cal.getFloat("lu",cal_row);
+					float lv = bank_cal.getFloat("lv",cal_row);
+					float lw = bank_cal.getFloat("lw",cal_row);
+					Cal_y_vs_x_precut.fill(x_cal,y_cal);
+					if(lu < 350 && lu > 60 && lv < 370 && lw < 390){
+						Cal_lu.fill(lu);
+						Cal_lv.fill(lv);
+						Cal_lw.fill(lw);
+						Cal_y_vs_x.fill(x_cal,y_cal);
+					}
 				}
-				if(y_htcc != 1000.0 && y_dc != 1000.0)
-				{	  
-					  DCYvsHTCCY.fill(y_dc,y_dc-y_htcc);
+
+				dc_row = dc_cut_row(event, k);
+				if(dc_row != -1){
+					x_dc = bank_traj.getFloat("x",dc_row);
+					y_dc = bank_traj.getFloat("y",dc_row);
+					z_dc = bank_traj.getFloat("z",dc_row);
+					double pos_dc = Math.sqrt(x_dc*x_dc + y_dc*y_dc + z_dc*z_dc);
+					double theta_dc = Math.acos((double) z_dc/ pos_dc);
+					phi_dc = Math.atan2((double) y_dc,(double) x_dc);
+					theta_dc *= 180/Math.PI;
+					phi_dc *= 180/Math.PI;
+					//if(dc_cut(x_dc,y_dc,sector)){
+						//System.out.println(theta_dc);
+						if(histmap.containsKey((int) Math.floor(theta_dc))){
+							histmap.get((int) Math.floor(theta_dc)).fill(phi_dc);
+						}
+					//}
 				}
-				if(phi_htcc != 1000.0 && phi_dc != 1000.0)
-				{					  
-					  DCPhivsHTCCPhi.fill(phi_dc ,phi_dc-phi_htcc);
-				}	  
+				htcc_row = htcc_cut_row(event,k);
+				if(htcc_row != -1){
+					x_htcc = bank_traj.getFloat("x",htcc_row);
+					y_htcc = bank_traj.getFloat("y",htcc_row);
+					z_htcc = bank_traj.getFloat("z",htcc_row);
+					double pos_htcc = Math.sqrt(x_htcc*x_htcc + y_htcc*y_htcc + z_htcc*z_htcc);
+					double theta_htcc = Math.acos((double) z_htcc/ pos_htcc);
+					phi_htcc = Math.atan2((double) y_htcc,(double) x_htcc);
+					theta_htcc *= 180/Math.PI;
+					phi_htcc *= 180/Math.PI;
+				}
+				if(dc_row != -1 && htcc_row != -1)
+				{
+					//if(counter%1000 == 1) System.out.println(dc_row + " " + htcc_row);
+
+					if(x_htcc != 1000.0 && x_dc != 1000.0)
+					{	  
+						  DCXvsHTCCX.fill(x_dc,x_dc-x_htcc);
+					}
+					if(y_htcc != 1000.0 && y_dc != 1000.0)
+					{	  
+						  DCYvsHTCCY.fill(y_dc,y_dc-y_htcc);
+					}
+					if(phi_htcc != 1000.0 && phi_dc != 1000.0)
+					{					  
+						  DCPhivsHTCCPhi.fill(phi_dc ,phi_dc-phi_htcc);
+					}	  
+				}
+
+				momentum.fill(mom);
+				LorentzVector q_vec = new LorentzVector(); //4 vector q
+				q_vec.copy(e_vec); //e - e'
+				q_vec.sub(e_vec_prime);
+				double Q2 = -q_vec.mass2(); //-q^2
+				Q2_hist.fill(Q2);
+
+				LorentzVector w_vec = new LorentzVector(); //4 vector used to calculate W
+				w_vec.copy(p_vec); //p-q
+				w_vec.add(q_vec);
+				double W = w_vec.mass(); 
+				W_hist.fill(W);
+				W_vs_Q2.fill(Q2,W);
+				Phi_vs_W.fill(W,phi);
+
+				if(e_vec_prime.e()>emax){emax = e_vec_prime.e();} //calculate max values of each param
+				if(theta > thetamax){thetamax = theta;}
+				if(phi > phimax){phimax = phi;}
+				if(vz > vzmax){vzmax = vz;}
+
+				E_vs_Theta.fill(theta,e_vec_prime.e());
+				z_vs_Theta.fill(theta,vz);
+				Phi_vs_Theta.fill(theta,phi);
 			}
-			
-			momentum.fill(mom);
-			LorentzVector q_vec = new LorentzVector(); //4 vector q
-			q_vec.copy(e_vec); //e - e'
-			q_vec.sub(e_vec_prime);
-			double Q2 = -q_vec.mass2(); //-q^2
-			Q2_hist.fill(Q2);
-
-			LorentzVector w_vec = new LorentzVector(); //4 vector used to calculate W
-			w_vec.copy(p_vec); //p-q
-			w_vec.add(q_vec);
-			double W = w_vec.mass(); 
-			W_hist.fill(W);
-			W_vs_Q2.fill(Q2,W);
-			Phi_vs_W.fill(W,phi);
-
-			if(e_vec_prime.e()>emax){emax = e_vec_prime.e();} //calculate max values of each param
-			if(theta > thetamax){thetamax = theta;}
-			if(phi > phimax){phimax = phi;}
-			if(vz > vzmax){vzmax = vz;}
-
-			E_vs_Theta.fill(theta,e_vec_prime.e());
-			z_vs_Theta.fill(theta,vz);
-			Phi_vs_Theta.fill(theta,phi);
+			if(pid == 2212){
+				float p_px = px; 
+				float p_py = py; 
+				float p_pz = pz; 
+				float p_beta = beta;
+				float p_mom = mom; 
+				float p_phi = phi; 
+				float p_theta = theta; 
+				float p_vz = vz; 
+				
+				Vector3 p_vec_3 = new Vector3(px, py, pz); //3 vector e'
+				LorentzVector p_vec_prime = new LorentzVector(); //4 vector e'
+				p_vec_prime.setVectM(p_vec_3, p_mass);
+			}
 
 
 
 		}
+		PhiPvsPhiE.fill(e_phi,p_phi);
+		EnPvsEnE.fill(e_vec_prime.e(),p_vec_prime.e());
+		ZPvsZE.fill(e_vz,p_vz);
+		
 	}
 	/*if(event.hasBank("RECHB::Calorimeter")){
 		DataBank bank_cal = event.getBank("RECHB::Calorimeter");
@@ -371,6 +411,18 @@ can14.save("DCPhivsHTCCPhi.png");
 TCanvas can15 = new TCanvas("can", 800,600);
 can15.draw(DCYvsHTCCY);
 can15.save("DCYvsHTCCY.png");
+
+TCanvas can16 = new TCanvas("can", 800,600);
+can16.draw(PhiPvsPhiE);
+can16.save("PhiPvsPhiE.png");
+
+TCanvas can17 = new TCanvas("can", 800,600);
+can17.draw(EnPvsEnE);
+can17.save("EnPvsEnE.png");
+
+TCanvas can18 = new TCanvas("can", 800,600);
+can18.draw(ZPvsZE);
+can18.save("ZPvsZE");
 
 HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
 for(int i : histmap.keySet()){
