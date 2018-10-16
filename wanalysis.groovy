@@ -88,6 +88,16 @@ H2F ZPvsZE = new H2F("ZPvsZE","ZPvsZE",500, 0 , enmax, 500, 0 , enmax);
 ZPvsZE.setTitleX("vertex Electron");
 ZPvsZE.setTitleY("vertex Proton");
 
+H1F PhiResPE = new H1F("PhiResPE","PhiResPE", 500, 0, 360);
+PhiResPE.setTitleX("Phi p - Phi e");
+
+H1F EResPE = new H1F("EResPE","EResPE", 500, -10, 10);
+EResPE.setTitleX("E p - E e");
+
+H1F VResPE = new H1F("VResPE","VResPE", 500, -10, 10);
+VResPE.setTitleX("Vz P - Vz E");
+
+
 
 HashMap<Integer,H1F> histmap = new HashMap<Integer,H1F>();
 for(int i = 5; i <= 20; i++){histmap.put(i,new H1F("Phi vs Theta " + i, 500,-phimax,phimax));}
@@ -296,6 +306,9 @@ while (reader.hasEvent()) {
 			PhiPvsPhiE.fill(e_phi,p_phi);
 			EnPvsEnE.fill(e_vec_prime.e(),p_vec_prime.e());
 			ZPvsZE.fill(e_vz,p_vz);
+			PhiResPE.fill(Math.abs(e_phi-p_phi));
+			EResPE.fill(Math.abs(e_vec_prime.e(),p_vec_prime.e()));
+			VResPE.fill(Math.abs(e_vz-p_vz));
 		}
 		found_electron = false; 
 		found_proton = false;
@@ -456,6 +469,18 @@ can17.save("EnPvsEnE.png");
 TCanvas can18 = new TCanvas("can", 800,600);
 can18.draw(ZPvsZE);
 can18.save("ZPvsZE.png");
+
+TCanvas can19 = new TCanvas("can", 800,600);
+can19.draw(PhiResPE);
+can19.save("PhiResPE.png");
+
+TCanvas can20 = new TCanvas("can", 800,600);
+can20.draw(EResPE);
+can20.save("EResPE.png");
+
+TCanvas can21 = new TCanvas("can", 800,600);
+can21.draw(VResPE);
+can21.save("VResPE.png");
 /*
 HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
 for(int i : histmap.keySet()){
