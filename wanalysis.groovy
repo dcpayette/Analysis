@@ -18,6 +18,8 @@ if(en > 7){wmax = 4.5;}
 else if(en > 4){wmax = 4;}
 else {wmax = 2.5;}
 
+System.out.println("Energy is " + en + " W max is " + wmax);
+
 HipoDataSource reader = new HipoDataSource();
 
 H1F momentum = new H1F("momentum", "momentum", 500, 0, 10);
@@ -115,6 +117,31 @@ float y_htcc = 1000.0;
 float z_htcc = 1000.0;
 double phi_dc = 1000.0;
 double phi_htcc = 1000.0;
+float e_px = 0;
+float e_py = 0;
+float e_pz = 0; 
+float e_beta = 0;
+float e_vz = 0;
+float e_phi = 0;
+float e_mom = 0;
+float e_theta = 0;
+
+float p_px = 0;
+float p_py = 0;
+float p_pz = 0; 
+float p_beta = 0;
+float p_vz = 0;
+float p_phi = 0;
+float p_theta = 0; 
+float p_mom = 0;
+ 
+boolean found_electron = false;
+boolean found_proton = false; 
+
+Vector3 e_vec_3 = new Vector3();
+Vector3 p_vec_3 = new Vector3();
+LorentzVector e_vec_prime = new LorentzVector();
+LorentzVector p_vec_prime = new LorentzVector();
 
 while (reader.hasEvent()) {
 	DataEvent event = reader.getNextEvent();
@@ -142,17 +169,18 @@ while (reader.hasEvent()) {
 			//if(q != -1) continue;
 
 			if(pid == 11){
-				float e_px = px; 
-				float e_py = py; 
-				float e_pz = pz; 
-				float e_beta = beta;
-				float e_mom = mom; 
-				float e_phi = phi; 
-				float e_theta = theta; 
-				float e_vz = vz; 
+			        found_electron = true;
+				e_px = px; 
+				e_py = py; 
+				e_pz = pz; 
+				e_beta = beta;
+				e_mom = mom; 
+				e_phi = phi; 
+				e_theta = theta; 
+				e_vz = vz; 
 				
-				Vector3 e_vec_3 = new Vector3(px, py, pz); //3 vector e'
-				LorentzVector e_vec_prime = new LorentzVector(); //4 vector e'
+				e_vec_3 = new Vector3(px, py, pz); //3 vector e'
+				e_vec_prime = new LorentzVector(); //4 vector e'
 				e_vec_prime.setVectM(e_vec_3, e_mass);
 				if(e_vec_prime.e() < 0.1 * en){continue;} //cut below 10% beam
 				if(theta < 5 || theta > 40){continue;} //cut outside of 5 and 40 degrees for FD
@@ -246,26 +274,31 @@ while (reader.hasEvent()) {
 				Phi_vs_Theta.fill(theta,phi);
 			}
 			if(pid == 2212){
-				float p_px = px; 
-				float p_py = py; 
-				float p_pz = pz; 
-				float p_beta = beta;
-				float p_mom = mom; 
-				float p_phi = phi; 
-				float p_theta = theta; 
-				float p_vz = vz; 
+			       	found_proton = true;
+				p_px = px; 
+				p_py = py; 
+				p_pz = pz; 
+				p_beta = beta;
+				p_mom = mom; 
+				p_phi = phi; 
+				p_theta = theta; 
+				p_vz = vz; 
 				
-				Vector3 p_vec_3 = new Vector3(px, py, pz); //3 vector e'
-				LorentzVector p_vec_prime = new LorentzVector(); //4 vector e'
+				p_vec_3 = new Vector3(px, py, pz); //3 vector e'
+				p_vec_prime = new LorentzVector(); //4 vector e'
 				p_vec_prime.setVectM(p_vec_3, p_mass);
 			}
 
 
 
 		}
-		PhiPvsPhiE.fill(e_phi,p_phi);
-		EnPvsEnE.fill(e_vec_prime.e(),p_vec_prime.e());
-		ZPvsZE.fill(e_vz,p_vz);
+		if(found_electron && found_proton){
+			PhiPvsPhiE.fill(e_phi,p_phi);
+			EnPvsEnE.fill(e_vec_prime.e(),p_vec_prime.e());
+			ZPvsZE.fill(e_vz,p_vz);
+		}
+		found_electron = false; 
+		found_proton = false;
 		
 	}
 	/*if(event.hasBank("RECHB::Calorimeter")){
@@ -379,7 +412,7 @@ can6.save("PhivsTheta.png");
 TCanvas can7 = new TCanvas("can", 800, 600);
 can7.draw(Phi_vs_W);
 can7.save("PhivsW.png");
-
+/*
 TCanvas can8 = new TCanvas("can", 800,600);
 can8.draw(Cal_y_vs_x_precut);
 can8.save("Calyvxprecut.png");
@@ -411,7 +444,7 @@ can14.save("DCPhivsHTCCPhi.png");
 TCanvas can15 = new TCanvas("can", 800,600);
 can15.draw(DCYvsHTCCY);
 can15.save("DCYvsHTCCY.png");
-
+*/
 TCanvas can16 = new TCanvas("can", 800,600);
 can16.draw(PhiPvsPhiE);
 can16.save("PhiPvsPhiE.png");
@@ -422,12 +455,13 @@ can17.save("EnPvsEnE.png");
 
 TCanvas can18 = new TCanvas("can", 800,600);
 can18.draw(ZPvsZE);
-can18.save("ZPvsZE");
-
+can18.save("ZPvsZE.png");
+/*
 HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
 for(int i : histmap.keySet()){
 	canvasmap.put(i, new TCanvas("can", 800,600));
 	canvasmap.get(i).draw(histmap.get(i));
 	canvasmap.get(i).save("phivstheta" + i + ".png");
 }
-	   
+*/	   
+System.out.println("Done!");
