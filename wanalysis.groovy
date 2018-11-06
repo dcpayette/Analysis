@@ -307,8 +307,8 @@ while (reader.hasEvent()) {
 			EnPvsEnE.fill(e_vec_prime.e(),p_vec_prime.e());
 			ZPvsZE.fill(e_vz,p_vz);
 			PhiResPE.fill(Math.abs(e_phi-p_phi));
-			EResPE.fill(Math.abs(e_vec_prime.e(),p_vec_prime.e()));
-			VResPE.fill(Math.abs(e_vz-p_vz));
+			EResPE.fill(e_vec_prime.e()-p_vec_prime.e());
+			VResPE.fill(e_vz-p_vz);
 		}
 		found_electron = false; 
 		found_proton = false;
@@ -425,7 +425,7 @@ can6.save("PhivsTheta.png");
 TCanvas can7 = new TCanvas("can", 800, 600);
 can7.draw(Phi_vs_W);
 can7.save("PhivsW.png");
-/*
+
 TCanvas can8 = new TCanvas("can", 800,600);
 can8.draw(Cal_y_vs_x_precut);
 can8.save("Calyvxprecut.png");
@@ -457,7 +457,7 @@ can14.save("DCPhivsHTCCPhi.png");
 TCanvas can15 = new TCanvas("can", 800,600);
 can15.draw(DCYvsHTCCY);
 can15.save("DCYvsHTCCY.png");
-*/
+
 TCanvas can16 = new TCanvas("can", 800,600);
 can16.draw(PhiPvsPhiE);
 can16.save("PhiPvsPhiE.png");
@@ -481,12 +481,12 @@ can20.save("EResPE.png");
 TCanvas can21 = new TCanvas("can", 800,600);
 can21.draw(VResPE);
 can21.save("VResPE.png");
-/*
+
 HashMap<Integer,TCanvas> canvasmap = new HashMap<Integer,TCanvas>();
 for(int i : histmap.keySet()){
 	canvasmap.put(i, new TCanvas("can", 800,600));
 	canvasmap.get(i).draw(histmap.get(i));
 	canvasmap.get(i).save("phivstheta" + i + ".png");
 }
-*/	   
+	   
 System.out.println("Done!");
